@@ -1,0 +1,33 @@
+name: Terraform2
+on: [push]
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs: 
+    terraform:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                shell: bash
+        steps:
+              - name: checkout
+                uses: actions/checkout@v3
+              - name: setup-terraform
+                uses: hashicorp/setup-terraform@v2
+                with: 
+                 terraform_version: 1.1.9
+              - name: init
+                run : terraform init
+              - name: fmt
+                run: terraform fmt
+              - name: validate
+                run: terraform validate
+              - name: plan
+                run: terraform plan
+              - name: release
+                run: npx semantic-release
+                env:
+                    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
